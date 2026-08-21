@@ -1,0 +1,34 @@
+{% extends "barbershop/base.html" %}
+
+{# Expected context from the view:
+   day    = the Day object for this date
+   slots  = TimeSlot queryset/list for this day, each exposing:
+              - id, start_time, price, is_booked
+#}
+
+{% block content %}
+<section class="section" style="border-top:none; padding-top:36px;">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-title"><span class="kanji">刻</span>Open hours — {{ day.date|date:"D, M j" }}</span>
+      <span class="section-hint"><a href="{% url 'barbershop:day_list' %}">← choose a different day</a></span>
+    </div>
+
+    <div class="slot-grid">
+      {% for slot in slots %}
+        <a class="slot {% if slot.is_booked %}is-booked{% endif %}"
+           {% if not slot.is_booked %}href="{% url 'barbershop:reserve' slot.id %}"{% endif %}
+           style="text-decoration:none;"
+           data-slot-id="{{ slot.id }}"
+           data-time="{{ slot.start_time|time:'g:i A' }}"
+           data-price="¥{{ slot.price }} deposit">
+          <span class="time">{{ slot.start_time|time:"g:i A" }}</span>
+          <span class="price">¥{{ slot.price }}{% if not slot.is_booked %} deposit{% endif %}</span>
+        </a>
+      {% empty %}
+        <p class="section-hint">No slots have been opened for this day yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

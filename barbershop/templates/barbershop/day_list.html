@@ -1,8 +1,51 @@
-<h1>Choose a Day</h1>
-<ul>
-  {% for day in days %}
-    <li><a href="{% url 'barbershop:day_detail' day.id %}">{{ day.date }}</a></li>
-  {% empty %}
-    <li>No available days right now.</li>
-  {% endfor %}
-</ul>
+{% extends "barbershop/base.html" %}
+{% load static %}
+
+{# Expected context from the view:
+   days = queryset/list of Day objects, each expected to expose:
+     - date            (date)
+     - is_available     (bool)
+     - open_slots_count (int)  -- annotate in the view, e.g.
+       Day.objects.filter(is_available=True).annotate(
+           open_slots_count=Count('timeslot', filter=Q(timeslot__is_booked=False))
+       )
+#}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-eyebrow">御 予 約<span class="hero-eyebrow-latin">RESERVE</span></div>
+  <div class="container">
+    <h1>A steady hand, held for centuries.</h1>
+    <p>Choose an open hour. The chair is yours the moment it's marked — no accounts, no forms to remember, just a name and a small deposit to hold your place.</p>
+    <div class="hero-meta">
+      <div><strong>30 min</strong>per sitting</div>
+      <div><strong>Tue–Sun</strong>open hours</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-title"><span class="kanji">日</span>Choose a day</span>
+      <span class="section-hint">Next {{ days|length }} days shown</span>
+    </div>
+
+    <div class="day-rail">
+      {% for day in days %}
+        <a class="day-tab {% if day.open_slots_count == 0 %}is-full{% endif %}"
+           href="{% url 'barbershop:slot_list' day.id %}"
+           style="text-decoration:none;">
+          <span class="dow">{{ day.date|date:"D" }}</span>
+          <span class="num">{{ day.date|date:"j" }}</span>
+          <span class="avail">
+            {% if day.open_slots_count == 0 %}満 full{% else %}{{ day.open_slots_count }} open{% endif %}
+          </span>
+        </a>
+      {% empty %}
+        <p class="section-hint">No days are open for booking right now. Please check back soon.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

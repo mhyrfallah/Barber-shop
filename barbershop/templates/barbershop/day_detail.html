@@ -1,9 +1,0 @@
-<h1>Available Slots — {{ day.date }}</h1>
-<ul>
-  {% for slot in slots %}
-    <li>{{ slot.start_time }} — ${{ slot.price }}</li>
-  {% empty %}
-    <li>No open slots for this day.</li>
-  {% endfor %}
-</ul>
-<a href="{% url 'barbershop:day_list' %}">← Back to days</a>

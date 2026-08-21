@@ -1,0 +1,25 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}床山 — MSH Barbershop{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/samurai.css' %}"> {% block extra_head %}{% endblock %}
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <div class="brand">
+          <span class="brand-mark">床山</span>
+          <span class="brand-sub">Mohammd Shariati Barber</span>
+        </div>
+        <nav class="header-nav">{% block nav_note %}Book a chair{% endblock %}</nav>
+      </div>
+    </header> {% block content %}{% endblock %} <footer class="site-footer">床山 Tokoyama Barber · Open Tue–Sun</footer>
+    <script src="{% static 'js/booking.js' %}"></script> {% block extra_scripts %}{% endblock %}
+  </body>
+
+</html>

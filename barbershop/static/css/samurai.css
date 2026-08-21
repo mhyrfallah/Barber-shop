@@ -1,0 +1,589 @@
+/* ============================================================
+   床山 — Tokoyama Design System
+   A barbershop booking interface inspired by Edo-period
+   kamiyui-doko (hairdressing houses) that once groomed samurai.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* -- Palette -- */
+  --ink: #1C1B19;
+  --ink-soft: #2A2824;
+  --paper: #EDE6D6;
+  --paper-deep: #E2D8C0;
+  --paper-line: rgba(28, 27, 25, 0.14);
+  --indigo: #223A5E;
+  --indigo-deep: #16283F;
+  --indigo-mist: rgba(34, 58, 94, 0.08);
+  --vermillion: #B23A2E;
+  --vermillion-deep: #8F2C22;
+  --gold: #A98B4E;
+  --charcoal: #33302B;
+  --charcoal-soft: #5C574E;
+
+  /* -- Type -- */
+  --font-display: 'Shippori Mincho', serif;
+  --font-body: 'Noto Sans JP', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* -- Rhythm -- */
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --shadow-lift: 0 10px 24px rgba(28, 27, 25, 0.18);
+  --shadow-soft: 0 2px 8px rgba(28, 27, 25, 0.10);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  background-image:
+    radial-gradient(rgba(28,27,25,0.035) 1px, transparent 1px);
+  background-size: 3px 3px;
+  color: var(--charcoal);
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--vermillion); color: var(--paper); }
+
+a { color: inherit; }
+
+.container {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* ------------------------------------------------------------
+   Header — a shop curtain (noren)
+   ------------------------------------------------------------ */
+.site-header {
+  position: relative;
+  background: var(--indigo);
+  color: var(--paper);
+  padding: 22px 0 34px;
+  overflow: hidden;
+}
+
+.site-header::after {
+  /* the notched hem of a hanging noren curtain */
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 16px;
+  background: var(--indigo);
+  -webkit-mask-image: repeating-linear-gradient(
+    90deg, #000 0 22px, transparent 22px 26px
+  );
+  mask-image: repeating-linear-gradient(
+    90deg, #000 0 22px, transparent 22px 26px
+  );
+}
+
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.brand-mark {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.brand-sub {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(237, 230, 214, 0.65);
+}
+
+.header-nav {
+  font-size: 0.85rem;
+  color: rgba(237, 230, 214, 0.75);
+  letter-spacing: 0.02em;
+}
+
+/* ------------------------------------------------------------
+   Hero — brush-stroke thesis + vertical eyebrow (tategaki)
+   ------------------------------------------------------------ */
+.hero {
+  position: relative;
+  padding: 76px 0 64px;
+  background: var(--paper);
+  overflow: hidden;
+}
+
+.hero-brush {
+  position: absolute;
+  top: -40px;
+  right: -60px;
+  width: 420px;
+  height: 420px;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  position: absolute;
+  right: 28px;
+  top: 40px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.5em;
+  color: var(--gold);
+  opacity: 0.55;
+}
+
+.hero-eyebrow-latin {
+  display: block;
+  writing-mode: horizontal-tb;
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--charcoal-soft);
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.1rem, 5vw, 3.4rem);
+  line-height: 1.25;
+  margin: 0 0 18px;
+  max-width: 11ch;
+  color: var(--ink);
+}
+
+.hero p {
+  max-width: 46ch;
+  font-size: 1.02rem;
+  color: var(--charcoal-soft);
+  margin: 0 0 30px;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 28px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--charcoal-soft);
+}
+
+.hero-meta strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------
+   Section scaffolding
+   ------------------------------------------------------------ */
+.section {
+  padding: 44px 0;
+  border-top: 1px solid var(--paper-line);
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.section-title .kanji {
+  color: var(--vermillion);
+  margin-right: 10px;
+  font-weight: 700;
+}
+
+.section-hint {
+  font-size: 0.82rem;
+  color: var(--charcoal-soft);
+}
+
+/* ------------------------------------------------------------
+   Day selector — wooden shop-sign tabs
+   ------------------------------------------------------------ */
+.day-rail {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin: 0 0 30px;
+  scrollbar-width: thin;
+}
+
+.day-tab {
+  flex: 0 0 auto;
+  position: relative;
+  min-width: 84px;
+  padding: 14px 10px 12px;
+  background: var(--paper-deep);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.day-tab:hover { transform: translateY(-2px); border-color: var(--gold); }
+
+.day-tab .dow {
+  display: block;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--charcoal-soft);
+  margin-bottom: 4px;
+}
+
+.day-tab .num {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.day-tab .avail {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--indigo);
+}
+
+.day-tab.is-full .avail { color: var(--vermillion-deep); }
+.day-tab.is-full { opacity: 0.55; cursor: not-allowed; }
+
+.day-tab.is-active {
+  background: var(--indigo);
+  border-color: var(--indigo);
+}
+.day-tab.is-active .dow,
+.day-tab.is-active .num { color: var(--paper); }
+.day-tab.is-active .avail { color: var(--gold); }
+.day-tab.is-active::before {
+  content: "";
+  position: absolute;
+  top: -1px; left: 50%;
+  transform: translateX(-50%);
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--vermillion);
+}
+
+/* ------------------------------------------------------------
+   Time slots — hanging wooden nameplates
+   ------------------------------------------------------------ */
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.slot {
+  position: relative;
+  padding: 16px 14px 14px;
+  background: var(--paper-deep);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.slot::before {
+  /* peg hole, like a hanging nameplate */
+  content: "";
+  position: absolute;
+  top: 8px; left: 50%;
+  transform: translateX(-50%);
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--charcoal-soft);
+  opacity: 0.3;
+}
+
+.slot .time {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  display: block;
+  margin-top: 6px;
+}
+
+.slot .price {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--indigo);
+  display: block;
+  margin-top: 4px;
+}
+
+.slot:hover:not(.is-booked) {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-soft);
+  border-color: var(--gold);
+}
+
+.slot.is-selected {
+  background: var(--indigo);
+  border-color: var(--indigo);
+}
+.slot.is-selected .time,
+.slot.is-selected .price { color: var(--paper); }
+.slot.is-selected .price { color: var(--gold); }
+
+.slot.is-booked {
+  cursor: not-allowed;
+  opacity: 0.42;
+  background: repeating-linear-gradient(
+    135deg, var(--paper-deep) 0 6px, var(--paper-line) 6px 7px
+  );
+}
+.slot.is-booked .time { text-decoration: line-through; text-decoration-color: var(--charcoal-soft); }
+.slot.is-booked .price::after { content: " · 満"; color: var(--vermillion-deep); }
+
+/* ------------------------------------------------------------
+   Reservation form — an unfurling scroll (emakimono)
+   ------------------------------------------------------------ */
+.scroll-panel {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-md);
+  padding: 34px 32px;
+  box-shadow: var(--shadow-soft);
+}
+
+.scroll-panel::before,
+.scroll-panel::after {
+  content: "";
+  position: absolute;
+  left: -1px; right: -1px;
+  height: 10px;
+  background: var(--gold);
+  opacity: 0.85;
+}
+.scroll-panel::before { top: -1px; border-radius: 6px 6px 0 0; }
+.scroll-panel::after { bottom: -1px; border-radius: 0 0 6px 6px; }
+
+.field {
+  margin-bottom: 20px;
+}
+
+.field label {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--charcoal-soft);
+  margin-bottom: 8px;
+}
+
+.field input[type="text"],
+.field input[type="tel"],
+.field input[type="email"] {
+  width: 100%;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 3px var(--indigo-mist);
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--paper-line);
+  font-size: 0.9rem;
+}
+.summary-line:last-of-type { border-bottom: none; }
+.summary-line .label { color: var(--charcoal-soft); }
+.summary-line .value { font-family: var(--font-mono); color: var(--ink); font-weight: 600; }
+
+.btn-seal {
+  position: relative;
+  width: 100%;
+  margin-top: 18px;
+  padding: 15px 20px;
+  background: var(--vermillion);
+  color: var(--paper);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.btn-seal:hover { background: var(--vermillion-deep); }
+.btn-seal:active { transform: scale(0.98); }
+.btn-seal:disabled { background: var(--charcoal-soft); cursor: not-allowed; }
+
+.btn-seal .kanji-small {
+  font-size: 0.7rem;
+  opacity: 0.75;
+  display: block;
+  letter-spacing: 0.3em;
+  margin-top: 3px;
+}
+
+/* ------------------------------------------------------------
+   Hanko — the signature confirmation stamp
+   ------------------------------------------------------------ */
+.hanko-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(28, 27, 25, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 999;
+}
+.hanko-overlay.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hanko-card {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  padding: 48px 46px 40px;
+  text-align: center;
+  max-width: 340px;
+  box-shadow: var(--shadow-lift);
+  transform: scale(0.9);
+  transition: transform 0.25s ease;
+}
+.hanko-overlay.is-active .hanko-card { transform: scale(1); }
+
+.hanko-stamp {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 20px;
+  border: 5px solid var(--vermillion);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vermillion);
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 800;
+  transform: rotate(-8deg) scale(0);
+  opacity: 0;
+}
+.hanko-overlay.is-active .hanko-stamp {
+  animation: stamp-down 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) 0.15s forwards;
+}
+
+@keyframes stamp-down {
+  0%   { transform: rotate(-8deg) scale(2.4); opacity: 0; }
+  60%  { transform: rotate(-8deg) scale(0.92); opacity: 1; }
+  100% { transform: rotate(-8deg) scale(1); opacity: 1; }
+}
+
+.hanko-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.hanko-card p {
+  font-size: 0.86rem;
+  color: var(--charcoal-soft);
+  margin: 0 0 22px;
+}
+
+.hanko-card .btn-close {
+  background: none;
+  border: 1px solid var(--paper-line);
+  padding: 10px 24px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  cursor: pointer;
+  color: var(--charcoal);
+}
+.hanko-card .btn-close:hover { border-color: var(--indigo); color: var(--indigo); }
+
+/* ------------------------------------------------------------
+   Footer
+   ------------------------------------------------------------ */
+.site-footer {
+  padding: 30px 0 40px;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--charcoal-soft);
+  border-top: 1px solid var(--paper-line);
+}
+
+/* ------------------------------------------------------------
+   Accessibility & motion
+   ------------------------------------------------------------ */
+:focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ------------------------------------------------------------
+   Responsive
+   ------------------------------------------------------------ */
+@media (max-width: 640px) {
+  .hero { padding: 56px 0 44px; }
+  .hero-eyebrow { display: none; }
+  .site-header .container { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .scroll-panel { padding: 26px 20px; }
+  .hero-meta { flex-wrap: wrap; row-gap: 14px; }
+}
