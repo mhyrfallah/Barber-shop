@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import Day, TimeSlot, Reservation
+from .models import Day, TimeSlot, Reservation, Service
 
 
 def day_select(request):
@@ -58,3 +58,24 @@ def reservation_done(request, reservation_id):
     """Simple confirmation page until the real payment flow is wired in."""
     reservation = get_object_or_404(Reservation, pk=reservation_id)
     return render(request, "barbershop/reservation_confirmed.html", {"reservation": reservation})
+
+
+def service_select(request, slot_id):
+    slot = get_object_or_404(TimeSlot, id=slot_id)
+
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('services')
+        if not selected_ids:
+            return render(request, 'barbershop/service_select.html', {
+                'slot': slot,
+                'services': Service.objects.filter(is_active=True),
+                'error': 'Please select at least one service.',
+            })
+        request.session['selected_service_ids'] = selected_ids
+        return redirect('barbershop:reservation_form', slot_id=slot.id)
+
+    services = Service.objects.filter(is_active=True)
+    return render(request, 'barbershop/service_select.html', {
+        'slot': slot,
+        'services': services,
+    })

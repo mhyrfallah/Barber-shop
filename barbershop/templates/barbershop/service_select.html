@@ -1,0 +1,17 @@
+{% extends 'barbershop/base.html' %}
+
+{% block content %}
+<h1>Choose your services</h1>
+<p>{{ slot.day.date }} — {{ slot.start_time }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    {% for service in services %}
+        <label>
+            <input type="checkbox" name="services" value="{{ service.id }}">
+            {{ service.name }} — ${{ service.price }}
+        </label>
+    {% endfor %}
+    <button type="submit">Continue</button>
+</form>
+{% endblock %}

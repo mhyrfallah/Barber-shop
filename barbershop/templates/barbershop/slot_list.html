@@ -17,7 +17,7 @@
     <div class="slot-grid">
       {% for slot in slots %}
         <a class="slot {% if slot.is_booked %}is-booked{% endif %}"
-           {% if not slot.is_booked %}href="{% url 'barbershop:reserve' slot.id %}"{% endif %}
+           {% if not slot.is_booked %}href="{% url 'barbershop:service_select' slot.id %}"{% endif %}
            style="text-decoration:none;"
            data-slot-id="{{ slot.id }}"
            data-time="{{ slot.start_time|time:'g:i A' }}"
