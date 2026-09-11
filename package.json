@@ -1,0 +1,11 @@
+{
+  "name": "barber-shop",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -i ./barbershop/static/css/src/input.css -o ./barbershop/static/css/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./barbershop/static/css/src/input.css -o ./barbershop/static/css/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

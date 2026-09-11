@@ -1,47 +1,65 @@
 {% extends "barbershop/base.html" %}
 
-{# Expected context from the view:
-   slot     = the TimeSlot object being reserved
-   services = queryset/list of Service objects, each exposing: id, name, price
-#}
+{% block nav_note %}Services{% endblock %}
 
 {% block content %}
-<section class="section section-top">
-  <div class="container">
-    <div class="section-head">
-      <span class="section-title"><span class="kanji">技</span>Choose your services</span>
-      <span class="section-hint">
-        <a href="{% url 'barbershop:slot_list' slot.day.id %}">← choose a different time</a>
-      </span>
+<div class="page-wrap">
+  <div class="kaidan">
+    <div class="kaidan-step is-done"><span class="kanji">日</span><span class="label">Day</span></div>
+    <div class="kaidan-rule"></div>
+    <div class="kaidan-step is-done"><span class="kanji">刻</span><span class="label">Time</span></div>
+    <div class="kaidan-rule"></div>
+    <div class="kaidan-step is-current"><span class="kanji">技</span><span class="label">Service</span></div>
+    <div class="kaidan-rule"></div>
+    <div class="kaidan-step"><span class="kanji">印</span><span class="label">Confirm</span></div>
+  </div>
+</div>
+
+<section class="section-block pt-2">
+  <div class="page-wrap">
+    <div class="section-card max-w-xl mx-auto">
+      <div class="mb-1">
+        <span class="section-title"><span class="kanji">技</span>What would you like?</span>
+      </div>
+      <p class="text-sm text-muted mb-6">
+        {{ slot.day.date|date:"D, M j" }} · {{ slot.start_time|time:"g:i A" }}
+      </p>
+
+      {% if error %}
+      <div class="alert-banner mb-5" role="alert">{{ error }}</div>
+      {% endif %}
+
+      <form method="post" data-service-form>
+        {% csrf_token %}
+
+        <div class="flex flex-col gap-3">
+          {% for service in services %}
+            <label class="service-row">
+              <input type="checkbox" name="services" value="{{ service.id }}" data-price="{{ service.price }}">
+              <span class="service-name">{{ service.name }}</span>
+              <span class="service-price">¥{{ service.price }}</span>
+            </label>
+          {% empty %}
+            <div class="empty-state">
+              <p>No services listed yet.</p>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="summary-line mt-6 pt-2">
+          <span class="label">Estimated total</span>
+          <span class="value text-coral" data-service-total>¥0</span>
+        </div>
+
+        <button type="submit" class="btn-seal mt-5">
+          Continue <span class="kanji-small">次 へ</span>
+        </button>
+      </form>
+
+      <div class="mt-5 text-center">
+        <a href="{% url 'barbershop:slot_list' slot.day.id %}" class="link-back">← Pick another time</a>
+      </div>
     </div>
-
-    <p class="section-hint mb-4">{{ slot.day.date|date:"D, M j" }} at {{ slot.start_time|time:"g:i A" }}</p>
-
-    <form method="post" data-service-form>
-      {% csrf_token %}
-
-      <div class="list-group list-group-checkable">
-        {% for service in services %}
-          <label class="list-group-item d-flex align-items-center gap-3">
-            <input class="form-check-input flex-shrink-0" type="checkbox" name="services"
-                   value="{{ service.id }}" data-price="{{ service.price }}">
-            <span class="flex-grow-1">{{ service.name }}</span>
-            <span class="badge">¥{{ service.price }}</span>
-          </label>
-        {% empty %}
-          <p class="section-hint">No services are configured yet.</p>
-        {% endfor %}
-      </div>
-
-      <div class="summary-line mt-4">
-        <span class="label">Estimated total</span>
-        <span class="value" data-service-total>¥0</span>
-      </div>
-
-      <button type="submit" class="btn-seal mt-3">
-        Continue to confirm <span class="kanji-small">続 き</span>
-      </button>
-    </form>
   </div>
 </section>
 {% endblock %}

@@ -1,48 +1,49 @@
 {% extends "barbershop/base.html" %}
 
-{# Expected context from the view:
-   slot = the TimeSlot object being reserved
-   form = a Django form for Reservation (full_name at minimum)
-#}
+{% block title %}You're booked! — 床山 Barbershop{% endblock %}
+{% block nav_note %}Confirmed ✓{% endblock %}
 
 {% block content %}
-<section class="section section-top">
-  <div class="container">
-    <div class="section-head">
-      <span class="section-title"><span class="kanji">名</span>Confirm your visit</span>
-      <span class="section-hint">
-        <a href="{% url 'barbershop:slot_list' slot.day.id %}">← choose a different time</a>
-      </span>
-    </div>
+<section class="section-block">
+  <div class="page-wrap flex justify-center">
+    <div class="scroll-panel text-center">
+      <div class="text-4xl mb-3" aria-hidden="true">🎉</div>
+      <h1 class="font-display text-2xl font-semibold text-ink mb-1">You're all set!</h1>
+      <p class="text-sm text-muted mb-6">We can't wait to see you, {{ reservation.full_name }}.</p>
 
-    <div class="scroll-panel">
-      <div class="summary-line">
-        <span class="label">Date</span>
-        <span class="value">{{ slot.day.date|date:"D, M j" }}</span>
-      </div>
-      <div class="summary-line">
-        <span class="label">Time</span>
-        <span class="value">{{ slot.start_time|time:"g:i A" }}</span>
-      </div>
-      <div class="summary-line">
-        <span class="label">Deposit</span>
-        <span class="value">¥{{ slot.price }}</span>
-      </div>
-
-      <form method="post" data-reservation-form class="mt-4" novalidate>
-        {% csrf_token %}
-        <div class="mb-3">
-          <label for="{{ form.full_name.id_for_label }}" class="form-label">Full name</label>
-          {{ form.full_name }}
-          {% if form.full_name.errors %}
-            <div class="invalid-feedback d-block">{{ form.full_name.errors|striptags }}</div>
-          {% endif %}
+      <div class="text-left">
+        <div class="summary-line">
+          <span class="label">Date</span>
+          <span class="value">{{ reservation.slot.day.date|date:"D, M j" }}</span>
         </div>
-        <button type="submit" class="btn btn-seal">
-          Reserve &amp; pay deposit <span class="kanji-small">御 予 約</span>
-        </button>
-      </form>
+        <div class="summary-line">
+          <span class="label">Time</span>
+          <span class="value">{{ reservation.slot.start_time|time:"g:i A" }}</span>
+        </div>
+        <div class="summary-line">
+          <span class="label">Status</span>
+          <span class="value text-coral">Confirmed</span>
+        </div>
+      </div>
+
+      <a href="{% url 'barbershop:day_list' %}" class="btn-seal mt-6 no-underline">
+        Back to home <span class="kanji-small">戻 る</span>
+      </a>
     </div>
   </div>
 </section>
+
+<div class="modal-backdrop" id="hankoBackdrop" aria-hidden="true"></div>
+<div class="hanko-modal" id="hankoModal" role="dialog" aria-modal="true" aria-labelledby="hankoTitle">
+  <div class="modal-content hanko-card">
+    <div class="hanko-stamp" aria-hidden="true">印</div>
+    <h3 id="hankoTitle">Spot secured!</h3>
+    <p>
+      See you on {{ reservation.slot.day.date|date:"M j" }} at
+      {{ reservation.slot.start_time|time:"g:i A" }}, {{ reservation.full_name }}.
+      Your chair is waiting.
+    </p>
+    <button type="button" class="btn-close-hanko" data-modal-close>Got it</button>
+  </div>
+</div>
 {% endblock %}

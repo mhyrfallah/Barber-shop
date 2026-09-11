@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-cream font-body text-ink antialiased;
+    line-height: 1.65;
+  }
+
+  ::selection {
+    @apply bg-coral text-white;
+  }
+}
+
+@layer components {
+  .page-wrap {
+    @apply mx-auto max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .glass-card {
+    @apply rounded-2xl border border-white/60 bg-surface/80 shadow-soft backdrop-blur-md;
+  }
+
+  .alert-banner {
+    @apply rounded-xl border border-coral/25 bg-coral/10 px-4 py-3 text-sm text-coral-deep;
+  }
+
+  .pill-badge {
+    @apply inline-flex items-center rounded-full bg-sage-mist px-3 py-1 text-xs font-medium text-sage;
+  }
+}

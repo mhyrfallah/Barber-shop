@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 720" role="img" aria-label="Fantasy Japanese barbershop interior">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a2744"/>
+      <stop offset="45%" stop-color="#2d4a6f"/>
+      <stop offset="100%" stop-color="#4a3728"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3d2e22"/>
+      <stop offset="100%" stop-color="#1f1610"/>
+    </linearGradient>
+    <radialGradient id="lantern1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffd89b" stop-opacity="0.95"/>
+      <stop offset="55%" stop-color="#f4a261" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#e07a5f" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="lantern2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffe8c8" stop-opacity="0.8"/>
+      <stop offset="60%" stop-color="#f2b85b" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#e07a5f" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="windowGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#a8c5e8" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#1a2744" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softBlur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+
+  <!-- sky & atmosphere -->
+  <rect width="1440" height="720" fill="url(#sky)"/>
+  <ellipse cx="1180" cy="120" rx="280" ry="180" fill="#f2b85b" opacity="0.08" filter="url(#softBlur)"/>
+  <ellipse cx="200" cy="500" rx="320" ry="200" fill="#e07a5f" opacity="0.12" filter="url(#softBlur)"/>
+
+  <!-- distant mountains -->
+  <path d="M0 380 L180 280 L360 340 L520 240 L720 320 L920 220 L1120 300 L1320 250 L1440 310 L1440 720 L0 720 Z" fill="#243552" opacity="0.55"/>
+  <path d="M0 430 L240 350 L480 400 L700 320 L980 390 L1240 340 L1440 400 L1440 720 L0 720 Z" fill="#1a2744" opacity="0.7"/>
+
+  <!-- shop interior frame -->
+  <rect x="0" y="280" width="1440" height="440" fill="url(#floor)"/>
+  <rect x="80" y="120" width="1280" height="520" rx="8" fill="#2a1f18" opacity="0.85"/>
+
+  <!-- window / moonlight -->
+  <rect x="980" y="160" width="260" height="180" rx="4" fill="#0f1828"/>
+  <circle cx="1110" cy="250" r="48" fill="#d4e4f7" opacity="0.35"/>
+  <ellipse cx="1110" cy="250" rx="180" ry="140" fill="url(#windowGlow)"/>
+
+  <!-- wooden beams -->
+  <rect x="80" y="118" width="1280" height="14" fill="#5c4030"/>
+  <rect x="80" y="300" width="14" height="340" fill="#4a3428"/>
+  <rect x="1346" y="300" width="14" height="340" fill="#4a3428"/>
+  <rect x="420" y="132" width="10" height="388" fill="#3d2a20" opacity="0.7"/>
+  <rect x="860" y="132" width="10" height="388" fill="#3d2a20" opacity="0.7"/>
+
+  <!-- lantern glow pools -->
+  <ellipse cx="320" cy="220" rx="160" ry="120" fill="url(#lantern1)"/>
+  <ellipse cx="720" cy="200" rx="200" ry="140" fill="url(#lantern2)"/>
+  <ellipse cx="520" cy="420" rx="140" ry="100" fill="url(#lantern1)" opacity="0.6"/>
+
+  <!-- hanging lanterns -->
+  <g opacity="0.95">
+    <line x1="320" y1="132" x2="320" y2="190" stroke="#8b6914" stroke-width="2"/>
+    <rect x="296" y="190" width="48" height="64" rx="4" fill="#c0392b"/>
+    <rect x="300" y="194" width="40" height="56" rx="2" fill="#e74c3c" opacity="0.8"/>
+    <rect x="308" y="210" width="24" height="24" fill="#ffd89b" opacity="0.9"/>
+
+    <line x1="720" y1="132" x2="720" y2="175" stroke="#8b6914" stroke-width="2"/>
+    <rect x="696" y="175" width="48" height="64" rx="4" fill="#c0392b"/>
+    <rect x="700" y="179" width="40" height="56" rx="2" fill="#e74c3c" opacity="0.8"/>
+    <rect x="708" y="195" width="24" height="24" fill="#ffd89b" opacity="0.9"/>
+  </g>
+
+  <!-- fantasy barber chair -->
+  <g transform="translate(480, 340)">
+    <ellipse cx="120" cy="200" rx="130" ry="24" fill="#000" opacity="0.35"/>
+    <path d="M60 200 L80 120 Q120 80 160 120 L180 200 Z" fill="#8b2942"/>
+    <rect x="70" y="100" width="100" height="90" rx="40" fill="#a83250"/>
+    <rect x="85" y="60" width="70" height="55" rx="20" fill="#c0392b"/>
+    <rect x="110" y="190" width="20" height="60" fill="#5c4030"/>
+    <circle cx="120" cy="255" r="28" fill="#4a3428"/>
+    <circle cx="120" cy="255" r="18" fill="#6b4f3a"/>
+    <!-- arm rests -->
+    <rect x="55" y="130" width="18" height="50" rx="8" fill="#7a2038"/>
+    <rect x="167" y="130" width="18" height="50" rx="8" fill="#7a2038"/>
+  </g>
+
+  <!-- mirror with soft glow -->
+  <rect x="240" y="200" width="120" height="160" rx="6" fill="#1a2744" stroke="#c9a227" stroke-width="3"/>
+  <rect x="252" y="212" width="96" height="136" rx="2" fill="#2d4a6f" opacity="0.6"/>
+  <ellipse cx="300" cy="280" rx="70" ry="90" fill="#a8c5e8" opacity="0.15"/>
+
+  <!-- counter / tools shelf -->
+  <rect x="180" y="480" width="420" height="18" rx="2" fill="#5c4030"/>
+  <rect x="200" y="430" width="8" height="50" fill="#8b7355"/>
+  <rect x="230" y="440" width="6" height="40" fill="#c0c0c0"/>
+  <rect x="250" y="445" width="4" height="35" fill="#d4af37"/>
+  <ellipse cx="280" cy="448" rx="12" ry="8" fill="#2d4a6f"/>
+
+  <!-- cherry blossom petals -->
+  <g fill="#f8b4c4" opacity="0.75">
+    <ellipse cx="150" cy="180" rx="6" ry="4" transform="rotate(25 150 180)"/>
+    <ellipse cx="890" cy="150" rx="5" ry="3" transform="rotate(-15 890 150)"/>
+    <ellipse cx="1050" cy="320" rx="7" ry="4" transform="rotate(40 1050 320)"/>
+    <ellipse cx="620" cy="100" rx="5" ry="3" transform="rotate(10 620 100)"/>
+    <ellipse cx="380" cy="90" rx="4" ry="3" transform="rotate(-30 380 90)"/>
+    <ellipse cx="1200" cy="400" rx="6" ry="4" transform="rotate(20 1200 400)"/>
+    <ellipse cx="200" cy="350" rx="5" ry="3" transform="rotate(55 200 350)"/>
+  </g>
+
+  <!-- mist at bottom -->
+  <rect x="0" y="520" width="1440" height="200" fill="#faf7f2" opacity="0.08"/>
+  <ellipse cx="720" cy="680" rx="900" ry="120" fill="#faf7f2" opacity="0.18" filter="url(#softBlur)"/>
+</svg>
