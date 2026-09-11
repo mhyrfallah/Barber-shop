@@ -1,0 +1,63 @@
+{% extends "barbershop/base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="hero-section">
+  <div class="hero-bg" style="background-image: url('{% static 'img/hero-bg.svg' %}');"></div>
+  <div class="hero-overlay"></div>
+  <div class="page-wrap hero-content">
+    <p class="hero-eyebrow">✦ 御予約 · Easy booking</p>
+    <h1>Your next great cut starts here.</h1>
+    <p class="hero-lede">
+      Pick a day, grab a time, and you're set. No account needed — just your name
+      and a small deposit to save your spot.
+    </p>
+    <div class="hero-chips">
+      <div class="hero-chip">
+        <span class="hero-chip-icon" aria-hidden="true">⏱</span>
+        <span><strong>30 min</strong> per visit</span>
+      </div>
+      <div class="hero-chip">
+        <span class="hero-chip-icon" aria-hidden="true">☀</span>
+        <span><strong>Tue–Sun</strong> we're open</span>
+      </div>
+      <div class="hero-chip">
+        <span class="hero-chip-icon" aria-hidden="true">✂</span>
+        <span><strong>Fantasy</strong> Japanese vibe</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-block">
+  <div class="page-wrap">
+    <div class="section-card">
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <span class="section-title"><span class="kanji">日</span>Pick a day</span>
+        <span class="pill-badge">{{ days|length }} days available</span>
+      </div>
+
+      <div class="day-rail flex gap-3 overflow-x-auto -mx-1 px-1">
+        {% for day in days %}
+          {% if day.open_slot_count > 0 %}
+            <a href="{% url 'barbershop:slot_list' day.id %}" class="day-tab">
+          {% else %}
+            <span class="day-tab is-full" aria-disabled="true">
+          {% endif %}
+              <span class="dow">{{ day.date|date:"D" }}</span>
+              <span class="num">{{ day.date|date:"j" }}</span>
+              <span class="avail">
+                {% if day.open_slot_count == 0 %}Full{% else %}{{ day.open_slot_count }} open{% endif %}
+              </span>
+          {% if day.open_slot_count > 0 %}</a>{% else %}</span>{% endif %}
+        {% empty %}
+          <div class="empty-state w-full">
+            <div class="empty-state-icon" aria-hidden="true">📅</div>
+            <p>No days open right now — check back soon!</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

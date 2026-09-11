@@ -1,0 +1,61 @@
+{% extends "barbershop/base.html" %}
+
+{% block nav_note %}Confirm{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+  <div class="kaidan">
+    <div class="kaidan-step is-done"><span class="kanji">日</span><span class="label">Day</span></div>
+    <div class="kaidan-rule"></div>
+    <div class="kaidan-step is-done"><span class="kanji">刻</span><span class="label">Time</span></div>
+    <div class="kaidan-rule"></div>
+    <div class="kaidan-step is-done"><span class="kanji">技</span><span class="label">Service</span></div>
+    <div class="kaidan-rule"></div>
+    <div class="kaidan-step is-current"><span class="kanji">印</span><span class="label">Confirm</span></div>
+  </div>
+</div>
+
+<section class="section-block pt-2">
+  <div class="page-wrap flex justify-center">
+    <div>
+      <div class="text-center mb-6">
+        <span class="section-title"><span class="kanji">名</span>Almost there!</span>
+        <p class="text-sm text-muted mt-2">Enter your name to hold this spot</p>
+      </div>
+
+      <div class="scroll-panel">
+        <div class="summary-line">
+          <span class="label">Date</span>
+          <span class="value">{{ slot.day.date|date:"D, M j" }}</span>
+        </div>
+        <div class="summary-line">
+          <span class="label">Time</span>
+          <span class="value">{{ slot.start_time|time:"g:i A" }}</span>
+        </div>
+        <div class="summary-line">
+          <span class="label">Deposit</span>
+          <span class="value">¥{{ slot.price }}</span>
+        </div>
+
+        <form method="post"
+              action="{% url 'barbershop:reservation_create' slot.id %}"
+              data-reservation-form
+              class="mt-6">
+          {% csrf_token %}
+          <div class="field mb-5">
+            <label for="full_name">Your full name</label>
+            <input type="text" id="full_name" name="full_name" class="form-input" required autocomplete="name" placeholder="e.g. Alex Smith">
+          </div>
+          <button type="submit" class="btn-seal">
+            Reserve my spot <span class="kanji-small">御 予 約</span>
+          </button>
+        </form>
+
+        <div class="mt-5 text-center">
+          <a href="{% url 'barbershop:slot_list' slot.day.id %}" class="link-back">← Change time</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

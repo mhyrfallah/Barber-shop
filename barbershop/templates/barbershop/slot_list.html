@@ -1,0 +1,45 @@
+{% extends "barbershop/base.html" %}
+
+{% block nav_note %}{{ day.date|date:"M j" }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="page-wrap">
+    <p class="section-hint uppercase tracking-widest mb-2">Step 2 of 4</p>
+    <h1 class="page-hero-title"><span class="kanji">刻</span>Choose a time</h1>
+    <p class="page-hero-sub">{{ day.date|date:"l, F j" }} — tap any open slot</p>
+  </div>
+</section>
+
+<section class="section-block pt-0">
+  <div class="page-wrap">
+    <div class="section-card">
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <span class="section-hint">Available hours</span>
+        <a href="{% url 'barbershop:day_list' %}" class="link-back">← Change day</a>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        {% for slot in slots %}
+          <article class="slot-card text-center p-5 {% if slot.is_booked %}is-booked{% endif %}">
+            {% if not slot.is_booked %}
+              <a href="{% url 'barbershop:service_select' slot.id %}"
+                 class="slot-link"
+                 aria-label="Book {{ slot.start_time|time:'g:i A' }}"></a>
+            {% endif %}
+            <span class="time block">{{ slot.start_time|time:"g:i A" }}</span>
+            <span class="price block mt-1.5">
+              ¥{{ slot.price }}{% if not slot.is_booked %} deposit{% endif %}
+            </span>
+          </article>
+        {% empty %}
+          <div class="col-span-full empty-state">
+            <div class="empty-state-icon" aria-hidden="true">🕐</div>
+            <p>No slots open for this day yet.</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
