@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Day, TimeSlot, Reservation
+from .models import Day, TimeSlot, Reservation, Service
 
 @admin.register(Day)
 class DayAdmin(admin.ModelAdmin):
@@ -9,7 +9,7 @@ class DayAdmin(admin.ModelAdmin):
 
 @admin.register(TimeSlot)
 class TimeSlotAdmin(admin.ModelAdmin):
-    list_display = ('day', 'start_time', 'price', 'is_booked')
+    list_display = ('day', 'start_time', 'is_booked')
     list_filter = ('day__date', 'is_booked')
     ordering = ('day', 'start_time')
 
@@ -17,3 +17,9 @@ class TimeSlotAdmin(admin.ModelAdmin):
 class ReservationAdmin(admin.ModelAdmin):
     list_display = ('full_name', 'slot', 'is_paid', 'created_at')
     list_filter = ('is_paid',)
+
+@admin.register(Service)
+class ServiceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'price', 'create_at')
+    list_filter = ('is_active',)
+    ordering = ('name',)
