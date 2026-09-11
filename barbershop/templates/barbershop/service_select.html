@@ -1,17 +1,47 @@
-{% extends 'barbershop/base.html' %}
+{% extends "barbershop/base.html" %}
+
+{# Expected context from the view:
+   slot     = the TimeSlot object being reserved
+   services = queryset/list of Service objects, each exposing: id, name, price
+#}
 
 {% block content %}
-<h1>Choose your services</h1>
-<p>{{ slot.day.date }} — {{ slot.start_time }}</p>
+<section class="section section-top">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-title"><span class="kanji">技</span>Choose your services</span>
+      <span class="section-hint">
+        <a href="{% url 'barbershop:slot_list' slot.day.id %}">← choose a different time</a>
+      </span>
+    </div>
 
-<form method="post">
-    {% csrf_token %}
-    {% for service in services %}
-        <label>
-            <input type="checkbox" name="services" value="{{ service.id }}">
-            {{ service.name }} — ${{ service.price }}
-        </label>
-    {% endfor %}
-    <button type="submit">Continue</button>
-</form>
+    <p class="section-hint mb-4">{{ slot.day.date|date:"D, M j" }} at {{ slot.start_time|time:"g:i A" }}</p>
+
+    <form method="post" data-service-form>
+      {% csrf_token %}
+
+      <div class="list-group list-group-checkable">
+        {% for service in services %}
+          <label class="list-group-item d-flex align-items-center gap-3">
+            <input class="form-check-input flex-shrink-0" type="checkbox" name="services"
+                   value="{{ service.id }}" data-price="{{ service.price }}">
+            <span class="flex-grow-1">{{ service.name }}</span>
+            <span class="badge">¥{{ service.price }}</span>
+          </label>
+        {% empty %}
+          <p class="section-hint">No services are configured yet.</p>
+        {% endfor %}
+      </div>
+
+      <div class="summary-line mt-4">
+        <span class="label">Estimated total</span>
+        <span class="value" data-service-total>¥0</span>
+      </div>
+
+      <button type="submit" class="btn-seal mt-3">
+        Continue to confirm <span class="kanji-small">続 き</span>
+      </button>
+    </form>
+  </div>
+</section>
 {% endblock %}

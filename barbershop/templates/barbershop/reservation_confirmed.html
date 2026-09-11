@@ -1,26 +1,48 @@
 {% extends "barbershop/base.html" %}
 
 {# Expected context from the view:
-   reservation = the created Reservation object (with .slot.day, .slot.start_time, .full_name)
+   slot = the TimeSlot object being reserved
+   form = a Django form for Reservation (full_name at minimum)
 #}
 
 {% block content %}
-<section class="section" style="border-top:none; padding-top:56px; min-height:40vh;">
-  <div class="container" style="text-align:center;">
-    <p class="section-hint">Booking recorded — pay the deposit to hold your seat.</p>
+<section class="section section-top">
+  <div class="container">
+    <div class="section-head">
+      <span class="section-title"><span class="kanji">名</span>Confirm your visit</span>
+      <span class="section-hint">
+        <a href="{% url 'barbershop:slot_list' slot.day.id %}">← choose a different time</a>
+      </span>
+    </div>
+
+    <div class="scroll-panel">
+      <div class="summary-line">
+        <span class="label">Date</span>
+        <span class="value">{{ slot.day.date|date:"D, M j" }}</span>
+      </div>
+      <div class="summary-line">
+        <span class="label">Time</span>
+        <span class="value">{{ slot.start_time|time:"g:i A" }}</span>
+      </div>
+      <div class="summary-line">
+        <span class="label">Deposit</span>
+        <span class="value">¥{{ slot.price }}</span>
+      </div>
+
+      <form method="post" data-reservation-form class="mt-4" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="{{ form.full_name.id_for_label }}" class="form-label">Full name</label>
+          {{ form.full_name }}
+          {% if form.full_name.errors %}
+            <div class="invalid-feedback d-block">{{ form.full_name.errors|striptags }}</div>
+          {% endif %}
+        </div>
+        <button type="submit" class="btn btn-seal">
+          Reserve &amp; pay deposit <span class="kanji-small">御 予 約</span>
+        </button>
+      </form>
+    </div>
   </div>
 </section>
-
-<div class="hanko-overlay is-active" aria-hidden="false">
-  <div class="hanko-card">
-    <div class="hanko-stamp">予約<br>済</div>
-    <h3>Your seat is held, {{ reservation.full_name }}.</h3>
-    <p>{{ reservation.slot.day.date|date:"D, M j" }} at {{ reservation.slot.start_time|time:"g:i A" }}. Show up a few minutes early — the chair won't wait twice.</p>
-    <a href="{% url 'barbershop:day_list.html' %}" class="btn-close" style="text-decoration:none; display:inline-block;">Done</a>
-  </div>
-</div>
-{% endblock %}
-
-{% block extra_scripts %}
-<script>window.addEventListener('DOMContentLoaded', showHankoOnLoad);</script>
 {% endblock %}

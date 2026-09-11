@@ -1,6 +1,20 @@
-{% extends "barbershop/base.html" %} {# Expected context from the view: slot = the TimeSlot object being reserved form =
-a Django form for Reservation (full_name at minimum) #} {% block content %} <section class="section"
-  style="border-top:none; padding-top:36px;">
+{% extends "barbershop/base.html" %}
+{# Expected context from the view: slot = the TimeSlot object being reserved, form = a Reservation form (full_name at minimum) #}
+
+{% block content %}
+<div class="container">
+  <div class="kaidan">
+    <div class="kaidan-step is-done"><span class="kanji">日</span><span class="label">Day</span></div>
+    <div class="kaidan-rule"></div>
+    <div class="kaidan-step is-done"><span class="kanji">刻</span><span class="label">Time</span></div>
+    <div class="kaidan-rule"></div>
+    <div class="kaidan-step is-done"><span class="kanji">技</span><span class="label">Service</span></div>
+    <div class="kaidan-rule"></div>
+    <div class="kaidan-step is-current"><span class="kanji">印</span><span class="label">Confirm</span></div>
+  </div>
+</div>
+
+<section class="section" style="border-top:none; padding-top:36px;">
   <div class="container">
     <div class="section-head">
       <span class="section-title"><span class="kanji">名</span>Confirm your visit</span>
@@ -21,16 +35,22 @@ a Django form for Reservation (full_name at minimum) #} {% block content %} <sec
         <span class="label">Deposit</span>
         <span class="value">¥{{ slot.price }}</span>
       </div>
-      <form method="post" data-reservation-form style="margin-top:24px;"> {% csrf_token %} <div class="field">
+      <form method="post" data-reservation-form style="margin-top:24px;">
+        {% csrf_token %}
+        <div class="field">
           <label for="{{ form.full_name.id_for_label }}">Full name</label>
-          {{ form.full_name }} {% if form.full_name.errors %} <p
-            style="color:var(--vermillion-deep); font-size:0.78rem; margin-top:6px;">
-            {{ form.full_name.errors|striptags }}
-          </p> {% endif %}
+          {{ form.full_name }}
+          {% if form.full_name.errors %}
+            <p style="color:var(--vermillion-deep); font-size:0.78rem; margin-top:6px;">
+              {{ form.full_name.errors|striptags }}
+            </p>
+          {% endif %}
         </div>
-        <button type="submit" class="btn-seal"> Reserve &amp; pay deposit <span class="kanji-small">御 予 約</span>
+        <button type="submit" class="btn-seal">
+          Reserve &amp; pay deposit <span class="kanji-small">御 予 約</span>
         </button>
       </form>
     </div>
   </div>
-</section> {% endblock %}
+</section>
+{% endblock %}

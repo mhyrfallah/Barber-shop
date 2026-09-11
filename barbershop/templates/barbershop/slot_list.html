@@ -2,31 +2,32 @@
 
 {# Expected context from the view:
    day    = the Day object for this date
-   slots  = TimeSlot queryset/list for this day, each exposing:
-              - id, start_time, price, is_booked
+   slots  = TimeSlot queryset/list, each exposing: id, start_time, price, is_booked
 #}
 
 {% block content %}
-<section class="section" style="border-top:none; padding-top:36px;">
+<section class="section section-top">
   <div class="container">
     <div class="section-head">
       <span class="section-title"><span class="kanji">刻</span>Open hours — {{ day.date|date:"D, M j" }}</span>
       <span class="section-hint"><a href="{% url 'barbershop:day_list' %}">← choose a different day</a></span>
     </div>
 
-    <div class="slot-grid">
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
       {% for slot in slots %}
-        <a class="slot {% if slot.is_booked %}is-booked{% endif %}"
-           {% if not slot.is_booked %}href="{% url 'barbershop:service_select' slot.id %}"{% endif %}
-           style="text-decoration:none;"
-           data-slot-id="{{ slot.id }}"
-           data-time="{{ slot.start_time|time:'g:i A' }}"
-           data-price="¥{{ slot.price }} deposit">
-          <span class="time">{{ slot.start_time|time:"g:i A" }}</span>
-          <span class="price">¥{{ slot.price }}{% if not slot.is_booked %} deposit{% endif %}</span>
-        </a>
+        <div class="col">
+          <div class="card slot-card {% if slot.is_booked %}is-booked{% endif %}">
+            <div class="card-body text-center">
+              {% if not slot.is_booked %}
+                <a href="{% url 'barbershop:service_select' slot.id %}" class="stretched-link"></a>
+              {% endif %}
+              <span class="time d-block">{{ slot.start_time|time:"g:i A" }}</span>
+              <span class="price d-block">¥{{ slot.price }}{% if not slot.is_booked %} deposit{% endif %}</span>
+            </div>
+          </div>
+        </div>
       {% empty %}
-        <p class="section-hint">No slots have been opened for this day yet.</p>
+        <p class="section-hint mb-0">No slots have been opened for this day yet.</p>
       {% endfor %}
     </div>
   </div>

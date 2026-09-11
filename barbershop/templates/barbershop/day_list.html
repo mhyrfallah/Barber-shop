@@ -1,23 +1,19 @@
 {% extends "barbershop/base.html" %}
-{% load static %}
 
 {# Expected context from the view:
-   days = queryset/list of Day objects, each expected to expose:
-     - date            (date)
-     - is_available     (bool)
-     - open_slots_count (int)  -- annotate in the view, e.g.
-       Day.objects.filter(is_available=True).annotate(
-           open_slots_count=Count('timeslot', filter=Q(timeslot__is_booked=False))
-       )
+   days = queryset/list of Day objects, each exposing:
+     - date              (date)
+     - is_available      (bool)
+     - open_slot_count   (int)  -- annotate in the view
 #}
 
 {% block content %}
 <section class="hero">
-  <div class="hero-eyebrow">御 予 約<span class="hero-eyebrow-latin">RESERVE</span></div>
   <div class="container">
+    <p class="hero-eyebrow-latin">御 予 約 · RESERVE</p>
     <h1>A steady hand, held for centuries.</h1>
-    <p>Choose an open hour. The chair is yours the moment it's marked — no accounts, no forms to remember, just a name and a small deposit to hold your place.</p>
-    <div class="hero-meta">
+    <p class="hero-lede">Choose an open hour. The chair is yours the moment it's marked — no accounts, no forms to remember, just a name and a small deposit to hold your place.</p>
+    <div class="hero-meta d-flex gap-5">
       <div><strong>30 min</strong>per sitting</div>
       <div><strong>Tue–Sun</strong>open hours</div>
     </div>
@@ -31,19 +27,21 @@
       <span class="section-hint">Next {{ days|length }} days shown</span>
     </div>
 
-    <div class="day-rail">
+    <div class="list-group list-group-horizontal day-rail flex-nowrap overflow-auto">
       {% for day in days %}
-        <a class="day-tab {% if day.open_slots_count == 0 %}is-full{% endif %}"
-           href="{% url 'barbershop:slot_list' day.id %}"
-           style="text-decoration:none;">
-          <span class="dow">{{ day.date|date:"D" }}</span>
-          <span class="num">{{ day.date|date:"j" }}</span>
-          <span class="avail">
-            {% if day.open_slots_count == 0 %}満 full{% else %}{{ day.open_slots_count }} open{% endif %}
-          </span>
-        </a>
+        {% if day.open_slot_count > 0 %}
+          <a href="{% url 'barbershop:slot_list' day.id %}" class="list-group-item list-group-item-action day-tab">
+        {% else %}
+          <span class="list-group-item day-tab disabled" aria-disabled="true">
+        {% endif %}
+            <span class="dow">{{ day.date|date:"D" }}</span>
+            <span class="num">{{ day.date|date:"j" }}</span>
+            <span class="avail">
+              {% if day.open_slot_count == 0 %}満 full{% else %}{{ day.open_slot_count }} open{% endif %}
+            </span>
+        {% if day.open_slot_count > 0 %}</a>{% else %}</span>{% endif %}
       {% empty %}
-        <p class="section-hint">No days are open for booking right now. Please check back soon.</p>
+        <p class="section-hint mb-0">No days are open for booking right now. Please check back soon.</p>
       {% endfor %}
     </div>
   </div>
