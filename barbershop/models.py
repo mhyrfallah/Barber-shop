@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models.deletion import PROTECT
 
 class Day(models.Model):
     date = models.DateField(unique=True)
@@ -27,7 +26,7 @@ class TimeSlot(models.Model):
 
 class Service(models.Model):
     name = models.CharField(max_length=120)
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     is_active = models.BooleanField(default=False)
     create_at = models.DateTimeField(auto_now_add=True)
 

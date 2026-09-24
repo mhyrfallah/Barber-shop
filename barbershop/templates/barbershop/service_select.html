@@ -4,23 +4,19 @@
 
 {% block content %}
 <div class="page-wrap">
-  <div class="kaidan">
-    <div class="kaidan-step is-done"><span class="kanji">日</span><span class="label">Day</span></div>
-    <div class="kaidan-rule"></div>
-    <div class="kaidan-step is-done"><span class="kanji">刻</span><span class="label">Time</span></div>
-    <div class="kaidan-rule"></div>
-    <div class="kaidan-step is-current"><span class="kanji">技</span><span class="label">Service</span></div>
-    <div class="kaidan-rule"></div>
-    <div class="kaidan-step"><span class="kanji">印</span><span class="label">Confirm</span></div>
+  <div class="step-track">
+    <div class="step is-done"><span class="dot">1</span><span class="label">Time</span></div>
+    <div class="step-rule"></div>
+    <div class="step is-current"><span class="dot">2</span><span class="label">Service</span></div>
+    <div class="step-rule"></div>
+    <div class="step"><span class="dot">3</span><span class="label">Confirm</span></div>
   </div>
 </div>
 
-<section class="section-block pt-2">
+<section class="section pt-2">
   <div class="page-wrap">
-    <div class="section-card max-w-xl mx-auto">
-      <div class="mb-1">
-        <span class="section-title"><span class="kanji">技</span>What would you like?</span>
-      </div>
+    <div class="scroll-panel max-w-xl mx-auto">
+      <h1 class="page-hero-title mb-1">What would you like?</h1>
       <p class="text-sm text-muted mb-6">
         {{ slot.day.date|date:"D, M j" }} · {{ slot.start_time|time:"g:i A" }}
       </p>
@@ -48,12 +44,10 @@
 
         <div class="summary-line mt-6 pt-2">
           <span class="label">Estimated total</span>
-          <span class="value text-coral" data-service-total>¥0</span>
+          <span class="value" data-service-total>¥0</span>
         </div>
 
-        <button type="submit" class="btn-seal mt-5">
-          Continue <span class="kanji-small">次 へ</span>
-        </button>
+        <button type="submit" class="btn-seal mt-5">Continue</button>
       </form>
 
       <div class="mt-5 text-center">

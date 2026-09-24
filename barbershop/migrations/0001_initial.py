@@ -5,46 +5,82 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Day',
+            name="Day",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateField(unique=True)),
-                ('is_available', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date", models.DateField(unique=True)),
+                ("is_available", models.BooleanField(default=False)),
             ],
             options={
-                'ordering': ['date'],
+                "ordering": ["date"],
             },
         ),
         migrations.CreateModel(
-            name='TimeSlot',
+            name="TimeSlot",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start_time', models.TimeField()),
-                ('price', models.DecimalField(decimal_places=2, max_digits=6)),
-                ('is_booked', models.BooleanField(default=False)),
-                ('day', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='slots', to='barbershop.day')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("start_time", models.TimeField()),
+                ("price", models.DecimalField(decimal_places=2, max_digits=6)),
+                ("is_booked", models.BooleanField(default=False)),
+                (
+                    "day",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="slots",
+                        to="barbershop.day",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['start_time'],
-                'unique_together': {('day', 'start_time')},
+                "ordering": ["start_time"],
+                "unique_together": {("day", "start_time")},
             },
         ),
         migrations.CreateModel(
-            name='Reservation',
+            name="Reservation",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('full_name', models.CharField(max_length=150)),
-                ('is_paid', models.BooleanField(default=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('slot', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='reservation', to='barbershop.timeslot')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("full_name", models.CharField(max_length=150)),
+                ("is_paid", models.BooleanField(default=False)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "slot",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="reservation",
+                        to="barbershop.timeslot",
+                    ),
+                ),
             ],
         ),
     ]

@@ -2,8 +2,12 @@ from django.contrib import messages
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import Day, TimeSlot, Reservation, Service
+from .models import Day, Reservation, Service, TimeSlot
 
+
+import itertools
+from django.templatetags.static import static
+# ...your other imports stay as they are
 
 def day_select(request):
     """Step 1 — list open days, each tagged with how many slots are free."""
@@ -16,7 +20,26 @@ def day_select(request):
         )
         .order_by("date")
     )
-    return render(request, "barbershop/day_list.html", {"days": days})
+
+    preview_images = itertools.cycle([
+        "img/Beard-Trim.jpg",
+        "img/Hair-Cut.jpg",
+        "img/Hair-Wash.jpg",
+        "img/Facial.jpg",
+    ])
+    services_preview = [
+        {
+            "name": service.name,
+            "price": service.price,
+            "image_url": static(next(preview_images)),
+        }
+        for service in Service.objects.filter(is_active=True).exclude(name="سشوار")[:4]
+    ]
+
+    return render(request, "barbershop/day_list.html", {
+        "days": days,
+        "services_preview": services_preview,
+    })
 
 
 def slot_list(request, day_id):
