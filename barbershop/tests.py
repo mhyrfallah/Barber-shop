@@ -1,11 +1,12 @@
 # barbershop/tests.py
 from datetime import date, time, timedelta
 
-from django.test import TestCase
-from django.db.utils import IntegrityError
 from django.db import transaction
+from django.db.utils import IntegrityError
+from django.test import TestCase
+from django.urls import reverse
 
-from .models import Day, TimeSlot, Reservation
+from .models import Day, Reservation, TimeSlot
 
 
 class DayModelTests(TestCase):
@@ -33,38 +34,35 @@ class TimeSlotModelTests(TestCase):
         self.day = Day.objects.create(date=date.today(), is_available=True)
 
     def test_create_slot(self):
-        slot = TimeSlot.objects.create(day=self.day, start_time=time(9, 0), price=25.00)
+        slot = TimeSlot.objects.create(day=self.day, start_time=time(9, 0))
         self.assertEqual(slot.day, self.day)
         self.assertFalse(slot.is_booked)
 
     def test_slot_str_available(self):
-        slot = TimeSlot.objects.create(day=self.day, start_time=time(9, 0), price=25.00)
+        slot = TimeSlot.objects.create(day=self.day, start_time=time(9, 0))
         self.assertIn("Available", str(slot))
 
     def test_slot_str_booked(self):
         slot = TimeSlot.objects.create(
-            day=self.day, start_time=time(9, 0), price=25.00, is_booked=True
+            day=self.day, start_time=time(9, 0), is_booked=True
         )
         self.assertIn("Booked", str(slot))
 
     def test_unique_together_day_and_start_time(self):
-        TimeSlot.objects.create(day=self.day, start_time=time(9, 0), price=25.00)
+        TimeSlot.objects.create(day=self.day, start_time=time(9, 0))
         with self.assertRaises(IntegrityError):
             with transaction.atomic():
-                TimeSlot.objects.create(
-                    day=self.day, start_time=time(9, 0), price=30.00
-                )
+                TimeSlot.objects.create(day=self.day, start_time=time(9, 0))
 
     def test_same_start_time_different_day_allowed(self):
         other_day = Day.objects.create(date=date.today() + timedelta(days=1))
-        TimeSlot.objects.create(day=self.day, start_time=time(9, 0), price=25.00)
-        # Should not raise
-        TimeSlot.objects.create(day=other_day, start_time=time(9, 0), price=25.00)
+        TimeSlot.objects.create(day=self.day, start_time=time(9, 0))
+        TimeSlot.objects.create(day=other_day, start_time=time(9, 0))
         self.assertEqual(TimeSlot.objects.count(), 2)
 
     def test_slots_ordered_by_start_time(self):
-        TimeSlot.objects.create(day=self.day, start_time=time(11, 0), price=25.00)
-        TimeSlot.objects.create(day=self.day, start_time=time(9, 0), price=25.00)
+        TimeSlot.objects.create(day=self.day, start_time=time(11, 0))
+        TimeSlot.objects.create(day=self.day, start_time=time(9, 0))
         times = list(TimeSlot.objects.values_list("start_time", flat=True))
         self.assertEqual(times, sorted(times))
 
@@ -72,9 +70,7 @@ class TimeSlotModelTests(TestCase):
 class ReservationModelTests(TestCase):
     def setUp(self):
         self.day = Day.objects.create(date=date.today(), is_available=True)
-        self.slot = TimeSlot.objects.create(
-            day=self.day, start_time=time(9, 0), price=25.00
-        )
+        self.slot = TimeSlot.objects.create(day=self.day, start_time=time(9, 0))
 
     def test_create_reservation(self):
         res = Reservation.objects.create(slot=self.slot, full_name="John Doe")
@@ -95,12 +91,6 @@ class ReservationModelTests(TestCase):
     def test_reverse_accessor_from_slot(self):
         res = Reservation.objects.create(slot=self.slot, full_name="John Doe")
         self.assertEqual(self.slot.reservation, res)
-
-
-# barbershop/tests.py  (add these classes below your existing model tests)
-
-from django.urls import reverse
-from datetime import date, time, timedelta
 
 
 class DayListViewTests(TestCase):
@@ -127,62 +117,98 @@ class DayListViewTests(TestCase):
     def test_empty_state_when_no_available_days(self):
         Day.objects.all().delete()
         response = self.client.get(reverse("barbershop:day_list"))
-        self.assertContains(response, "No available days right now.")
+        self.assertContains(response, "No days open right now")
 
     def test_days_ordered_by_date(self):
         Day.objects.all().delete()
-        d1 = Day.objects.create(
-            date=date.today() + timedelta(days=2), is_available=True
-        )
+        d1 = Day.objects.create(date=date.today() + timedelta(days=2), is_available=True)
         d2 = Day.objects.create(date=date.today(), is_available=True)
         response = self.client.get(reverse("barbershop:day_list"))
-        days_in_context = list(response.context["days"])
-        self.assertEqual(days_in_context, [d2, d1])
+        self.assertEqual(list(response.context["days"]), [d2, d1])
 
 
-class DayDetailViewTests(TestCase):
+class SlotListViewTests(TestCase):
     def setUp(self):
         self.day = Day.objects.create(date=date.today(), is_available=True)
         self.unavailable_day = Day.objects.create(
             date=date.today() + timedelta(days=1), is_available=False
         )
-        self.open_slot = TimeSlot.objects.create(
-            day=self.day, start_time=time(9, 0), price=25.00, is_booked=False
-        )
+        self.open_slot = TimeSlot.objects.create(day=self.day, start_time=time(9, 0))
         self.booked_slot = TimeSlot.objects.create(
-            day=self.day, start_time=time(10, 0), price=25.00, is_booked=True
+            day=self.day, start_time=time(10, 0), is_booked=True
         )
+        self.url = reverse("barbershop:slot_list", args=[self.day.id])
 
     def test_status_code_200_for_available_day(self):
-        response = self.client.get(reverse("barbershop:day_detail", args=[self.day.id]))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.client.get(self.url).status_code, 200)
 
     def test_correct_template_used(self):
-        response = self.client.get(reverse("barbershop:day_detail", args=[self.day.id]))
-        self.assertTemplateUsed(response, "barbershop/day_detail.html")
+        self.assertTemplateUsed(self.client.get(self.url), "barbershop/slot_list.html")
 
     def test_404_for_unavailable_day(self):
-        response = self.client.get(
-            reverse("barbershop:day_detail", args=[self.unavailable_day.id])
-        )
-        self.assertEqual(response.status_code, 404)
+        url = reverse("barbershop:slot_list", args=[self.unavailable_day.id])
+        self.assertEqual(self.client.get(url).status_code, 404)
 
     def test_404_for_nonexistent_day(self):
-        response = self.client.get(reverse("barbershop:day_detail", args=[9999]))
-        self.assertEqual(response.status_code, 404)
+        url = reverse("barbershop:slot_list", args=[9999])
+        self.assertEqual(self.client.get(url).status_code, 404)
 
-    def test_only_unbooked_slots_shown(self):
-        response = self.client.get(reverse("barbershop:day_detail", args=[self.day.id]))
-        slots_in_context = list(response.context["slots"])
-        self.assertIn(self.open_slot, slots_in_context)
-        self.assertNotIn(self.booked_slot, slots_in_context)
+    def test_all_slots_listed_in_time_order(self):
+        response = self.client.get(self.url)
+        self.assertEqual(
+            list(response.context["slots"]), [self.open_slot, self.booked_slot]
+        )
 
-    def test_empty_state_when_no_open_slots(self):
-        self.open_slot.is_booked = True
-        self.open_slot.save()
-        response = self.client.get(reverse("barbershop:day_detail", args=[self.day.id]))
-        self.assertContains(response, "No open slots for this day.")
+    def test_only_open_slot_is_bookable(self):
+        response = self.client.get(self.url)
+        open_link = reverse("barbershop:service_select", args=[self.open_slot.id])
+        booked_link = reverse("barbershop:service_select", args=[self.booked_slot.id])
+        self.assertContains(response, open_link)
+        self.assertNotContains(response, booked_link)
+        self.assertContains(response, "is-booked", count=1)
+
+    def test_empty_state_when_day_has_no_slots(self):
+        empty_day = Day.objects.create(
+            date=date.today() + timedelta(days=2), is_available=True
+        )
+        response = self.client.get(reverse("barbershop:slot_list", args=[empty_day.id]))
+        self.assertContains(response, "No slots open for this day yet.")
 
     def test_context_contains_correct_day(self):
-        response = self.client.get(reverse("barbershop:day_detail", args=[self.day.id]))
-        self.assertEqual(response.context["day"], self.day)
+        self.assertEqual(self.client.get(self.url).context["day"], self.day)
+
+
+class DoubleBookingTests(TestCase):
+    def setUp(self):
+        self.day = Day.objects.create(date=date(2026, 10, 1), is_available=True)
+        self.slot = TimeSlot.objects.create(day=self.day, start_time=time(10, 0))
+        self.url = reverse("barbershop:reservation_create", args=[self.slot.id])
+        self.slot_list_url = reverse("barbershop:slot_list", args=[self.day.id])
+
+    def test_first_booking_succeeds(self):
+        resp = self.client.post(self.url, {"full_name": "Alex"})
+        self.assertEqual(resp.status_code, 302)
+        self.slot.refresh_from_db()
+        self.assertTrue(self.slot.is_booked)
+        self.assertEqual(Reservation.objects.count(), 1)
+
+    def test_second_booking_is_rejected(self):
+        self.client.post(self.url, {"full_name": "Alex"})
+        resp = self.client.post(self.url, {"full_name": "Sam"})
+        self.assertRedirects(resp, self.slot_list_url)
+        self.assertEqual(Reservation.objects.count(), 1)
+        self.assertEqual(Reservation.objects.get().full_name, "Alex")
+
+    def test_integrity_error_is_handled_when_flag_out_of_sync(self):
+        # Reservation exists but is_booked is still False -> hits the DB constraint
+        Reservation.objects.create(slot=self.slot, full_name="Alex")
+        resp = self.client.post(self.url, {"full_name": "Sam"})
+        self.assertRedirects(resp, self.slot_list_url)
+        self.assertEqual(Reservation.objects.count(), 1)
+
+    def test_booked_slot_pages_redirect_instead_of_404(self):
+        self.slot.is_booked = True
+        self.slot.save()
+        for name in ("reservation_form", "service_select"):
+            resp = self.client.get(reverse(f"barbershop:{name}", args=[self.slot.id]))
+            self.assertRedirects(resp, self.slot_list_url)
