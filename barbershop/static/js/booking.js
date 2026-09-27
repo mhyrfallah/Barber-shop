@@ -22,7 +22,7 @@
       checkboxes.forEach(cb => {
         if (cb.checked) total += parseFloat(cb.dataset.price || '0');
       });
-      totalEl.textContent = `¥${total}`;
+      totalEl.textContent = `${total.toLocaleString('en-US')} Toman`;
     }
   
     checkboxes.forEach(cb => cb.addEventListener('change', updateTotal));

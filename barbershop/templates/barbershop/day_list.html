@@ -85,7 +85,7 @@
         <img src="{{ item.image_url }}" alt="{{ item.name }}">
         <div class="body">
           <div class="name">{{ item.name }}</div>
-          <div class="price">¥{{ item.price }}</div>
+          <div class="price">{{ item.price|floatformat:"0g" }} Toman</div>
         </div>
       </article>
       {% endfor %}

@@ -18,8 +18,9 @@ class TimeSlotAdmin(admin.ModelAdmin):
 
 @admin.register(Reservation)
 class ReservationAdmin(admin.ModelAdmin):
-    list_display = ("full_name", "slot", "is_paid", "created_at")
-    list_filter = ("is_paid",)
+    list_display = ("full_name", "phone_number", "slot", "is_paid", "reminder_sent", "created_at")
+    list_filter = ("is_paid", "reminder_sent")
+    search_fields = ("full_name", "phone_number")
 
 
 @admin.register(Service)

@@ -33,7 +33,7 @@
             <label class="service-row">
               <input type="checkbox" name="services" value="{{ service.id }}" data-price="{{ service.price }}">
               <span class="service-name">{{ service.name }}</span>
-              <span class="service-price">¥{{ service.price }}</span>
+              <span class="service-price">{{ service.price|floatformat:"0g" }} Toman</span>
             </label>
           {% empty %}
             <div class="empty-state">
@@ -43,8 +43,8 @@
         </div>
 
         <div class="summary-line mt-6 pt-2">
-          <span class="label">Estimated total</span>
-          <span class="value" data-service-total>¥0</span>
+          <span class="label">Deposit to pay</span>
+          <span class="value" data-service-total>0 Toman</span>
         </div>
 
         <button type="submit" class="btn-seal mt-5">Continue</button>

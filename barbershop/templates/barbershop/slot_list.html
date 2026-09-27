@@ -38,7 +38,9 @@
           {% endif %}
           <span class="time block">{{ slot.start_time|time:"g:i A" }}</span>
           <span class="price block mt-1.5">
-            ¥{{ slot.price }}{% if not slot.is_booked %} deposit{% endif %}
+            {% if not slot.is_booked %}
+            Available
+            {% endif %}
           </span>
         </article>
       {% empty %}

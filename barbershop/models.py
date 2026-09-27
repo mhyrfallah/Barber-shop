@@ -1,4 +1,12 @@
+from django.core.validators import RegexValidator
 from django.db import models
+
+
+phone_validator = RegexValidator(
+    regex=r'^09\d{9}$',
+    message="Enter a valid Iranian mobile number, e.g. 09123456789.",
+)
+
 
 class Day(models.Model):
     date = models.DateField(unique=True)
@@ -37,9 +45,12 @@ class Service(models.Model):
 class Reservation(models.Model):
     slot = models.OneToOneField(TimeSlot, on_delete=models.CASCADE, related_name='reservation')
     full_name = models.CharField(max_length=150)
+    phone_number = models.CharField(max_length=11, validators=[phone_validator], default='09110000000')
     is_paid = models.BooleanField(default=False)
     services = models.ManyToManyField(Service, related_name='reservations')
+    deposit_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+    reminder_sent = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.full_name} - {self.slot}"

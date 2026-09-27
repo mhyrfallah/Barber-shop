@@ -6,7 +6,7 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Day, Reservation, TimeSlot
+from .models import Day, Reservation, TimeSlot, Service
 
 
 class DayModelTests(TestCase):
@@ -182,29 +182,50 @@ class DoubleBookingTests(TestCase):
     def setUp(self):
         self.day = Day.objects.create(date=date(2026, 10, 1), is_available=True)
         self.slot = TimeSlot.objects.create(day=self.day, start_time=time(10, 0))
+        self.cut = Service.objects.create(name="Haircut", price=Decimal("50000"), is_active=True)
+        self.beard = Service.objects.create(name="Beard", price=Decimal("30000"), is_active=True)
         self.url = reverse("barbershop:reservation_create", args=[self.slot.id])
         self.slot_list_url = reverse("barbershop:slot_list", args=[self.day.id])
 
+    def client_with(self, *services):
+        client = Client()
+        session = client.session
+        session["selected_service_ids"] = [s.pk for s in services]
+        session.save()
+        return client
+
     def test_first_booking_succeeds(self):
-        resp = self.client.post(self.url, {"full_name": "Alex"})
+        resp = self.client_with(self.cut).post(self.url, {"full_name": "Alex"})
         self.assertEqual(resp.status_code, 302)
         self.slot.refresh_from_db()
         self.assertTrue(self.slot.is_booked)
         self.assertEqual(Reservation.objects.count(), 1)
 
+    def test_deposit_is_sum_of_selected_services(self):
+        self.client_with(self.cut, self.beard).post(self.url, {"full_name": "Alex"})
+        res = Reservation.objects.get()
+        self.assertEqual(res.deposit_amount, Decimal("80000"))
+        self.assertCountEqual(res.services.all(), [self.cut, self.beard])
+
     def test_second_booking_is_rejected(self):
-        self.client.post(self.url, {"full_name": "Alex"})
-        resp = self.client.post(self.url, {"full_name": "Sam"})
+        self.client_with(self.cut).post(self.url, {"full_name": "Alex"})
+        resp = self.client_with(self.cut).post(self.url, {"full_name": "Sam"})
         self.assertRedirects(resp, self.slot_list_url)
         self.assertEqual(Reservation.objects.count(), 1)
         self.assertEqual(Reservation.objects.get().full_name, "Alex")
 
     def test_integrity_error_is_handled_when_flag_out_of_sync(self):
-        # Reservation exists but is_booked is still False -> hits the DB constraint
         Reservation.objects.create(slot=self.slot, full_name="Alex")
-        resp = self.client.post(self.url, {"full_name": "Sam"})
+        resp = self.client_with(self.cut).post(self.url, {"full_name": "Sam"})
         self.assertRedirects(resp, self.slot_list_url)
         self.assertEqual(Reservation.objects.count(), 1)
+
+    def test_no_services_in_session_redirects_to_service_select(self):
+        resp = self.client.post(self.url, {"full_name": "Alex"})
+        self.assertRedirects(
+            resp, reverse("barbershop:service_select", args=[self.slot.id])
+        )
+        self.assertEqual(Reservation.objects.count(), 0)
 
     def test_booked_slot_pages_redirect_instead_of_404(self):
         self.slot.is_booked = True
