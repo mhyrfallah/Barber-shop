@@ -1,9 +1,10 @@
 # barbershop/tests.py
 from datetime import date, time, timedelta
+from decimal import Decimal
 
 from django.db import transaction
 from django.db.utils import IntegrityError
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from .models import Day, Reservation, TimeSlot, Service
@@ -73,23 +74,33 @@ class ReservationModelTests(TestCase):
         self.slot = TimeSlot.objects.create(day=self.day, start_time=time(9, 0))
 
     def test_create_reservation(self):
-        res = Reservation.objects.create(slot=self.slot, full_name="John Doe")
+        res = Reservation.objects.create(
+            slot=self.slot, full_name="John Doe", phone_number="09123456789"
+        )
         self.assertEqual(res.slot, self.slot)
         self.assertFalse(res.is_paid)
         self.assertIsNotNone(res.created_at)
 
     def test_reservation_str(self):
-        res = Reservation.objects.create(slot=self.slot, full_name="John Doe")
+        res = Reservation.objects.create(
+            slot=self.slot, full_name="John Doe", phone_number="09123456789"
+        )
         self.assertIn("John Doe", str(res))
 
     def test_slot_can_only_have_one_reservation(self):
-        Reservation.objects.create(slot=self.slot, full_name="John Doe")
+        Reservation.objects.create(
+            slot=self.slot, full_name="John Doe", phone_number="09123456789"
+        )
         with self.assertRaises(IntegrityError):
             with transaction.atomic():
-                Reservation.objects.create(slot=self.slot, full_name="Jane Doe")
+                Reservation.objects.create(
+                    slot=self.slot, full_name="Jane Doe", phone_number="09129876543"
+                )
 
     def test_reverse_accessor_from_slot(self):
-        res = Reservation.objects.create(slot=self.slot, full_name="John Doe")
+        res = Reservation.objects.create(
+            slot=self.slot, full_name="John Doe", phone_number="09123456789"
+        )
         self.assertEqual(self.slot.reservation, res)
 
 
@@ -186,6 +197,7 @@ class DoubleBookingTests(TestCase):
         self.beard = Service.objects.create(name="Beard", price=Decimal("30000"), is_active=True)
         self.url = reverse("barbershop:reservation_create", args=[self.slot.id])
         self.slot_list_url = reverse("barbershop:slot_list", args=[self.day.id])
+        self.valid_phone = "09123456789"
 
     def client_with(self, *services):
         client = Client()
@@ -195,33 +207,47 @@ class DoubleBookingTests(TestCase):
         return client
 
     def test_first_booking_succeeds(self):
-        resp = self.client_with(self.cut).post(self.url, {"full_name": "Alex"})
+        resp = self.client_with(self.cut).post(
+            self.url, {"full_name": "Alex", "phone_number": self.valid_phone}
+        )
         self.assertEqual(resp.status_code, 302)
         self.slot.refresh_from_db()
         self.assertTrue(self.slot.is_booked)
         self.assertEqual(Reservation.objects.count(), 1)
 
     def test_deposit_is_sum_of_selected_services(self):
-        self.client_with(self.cut, self.beard).post(self.url, {"full_name": "Alex"})
+        self.client_with(self.cut, self.beard).post(
+            self.url, {"full_name": "Alex", "phone_number": self.valid_phone}
+        )
         res = Reservation.objects.get()
         self.assertEqual(res.deposit_amount, Decimal("80000"))
         self.assertCountEqual(res.services.all(), [self.cut, self.beard])
 
     def test_second_booking_is_rejected(self):
-        self.client_with(self.cut).post(self.url, {"full_name": "Alex"})
-        resp = self.client_with(self.cut).post(self.url, {"full_name": "Sam"})
+        self.client_with(self.cut).post(
+            self.url, {"full_name": "Alex", "phone_number": self.valid_phone}
+        )
+        resp = self.client_with(self.cut).post(
+            self.url, {"full_name": "Sam", "phone_number": "09129876543"}
+        )
         self.assertRedirects(resp, self.slot_list_url)
         self.assertEqual(Reservation.objects.count(), 1)
         self.assertEqual(Reservation.objects.get().full_name, "Alex")
 
     def test_integrity_error_is_handled_when_flag_out_of_sync(self):
-        Reservation.objects.create(slot=self.slot, full_name="Alex")
-        resp = self.client_with(self.cut).post(self.url, {"full_name": "Sam"})
+        Reservation.objects.create(
+            slot=self.slot, full_name="Alex", phone_number=self.valid_phone
+        )
+        resp = self.client_with(self.cut).post(
+            self.url, {"full_name": "Sam", "phone_number": "09129876543"}
+        )
         self.assertRedirects(resp, self.slot_list_url)
         self.assertEqual(Reservation.objects.count(), 1)
 
     def test_no_services_in_session_redirects_to_service_select(self):
-        resp = self.client.post(self.url, {"full_name": "Alex"})
+        resp = self.client.post(
+            self.url, {"full_name": "Alex", "phone_number": self.valid_phone}
+        )
         self.assertRedirects(
             resp, reverse("barbershop:service_select", args=[self.slot.id])
         )
@@ -233,3 +259,23 @@ class DoubleBookingTests(TestCase):
         for name in ("reservation_form", "service_select"):
             resp = self.client.get(reverse(f"barbershop:{name}", args=[self.slot.id]))
             self.assertRedirects(resp, self.slot_list_url)
+
+    def test_missing_phone_number_rejected(self):
+        resp = self.client_with(self.cut).post(self.url, {"full_name": "Alex"})
+        self.assertRedirects(
+            resp, reverse("barbershop:reservation_form", args=[self.slot.id])
+        )
+        self.assertEqual(Reservation.objects.count(), 0)
+        self.slot.refresh_from_db()
+        self.assertFalse(self.slot.is_booked)
+
+    def test_invalid_phone_number_rejected(self):
+        resp = self.client_with(self.cut).post(
+            self.url, {"full_name": "Alex", "phone_number": "12345"}
+        )
+        self.assertRedirects(
+            resp, reverse("barbershop:reservation_form", args=[self.slot.id])
+        )
+        self.assertEqual(Reservation.objects.count(), 0)
+        self.slot.refresh_from_db()
+        self.assertFalse(self.slot.is_booked)

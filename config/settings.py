@@ -10,11 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
-from nt import environ
 from pathlib import Path
 import environ
-
-import barbershop
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -144,3 +141,25 @@ MAILERS = {
         "BACKEND": "django.core.mail.backends.console.EmailBackend",
     },
 }
+
+
+# Celery
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html
+
+CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default="redis://localhost:6379/0")
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_ENABLE_UTC = True
+
+CELERY_BEAT_SCHEDULE = {
+    "send-appointment-reminders": {
+        "task": "barbershop.tasks.send_appointment_reminders",
+        "schedule": 60.0,  # check every minute
+    },
+}
+
+
+# Kavenegar (SMS reminders)
+
+KAVENEGAR_API_KEY = env("KAVENEGAR_API_KEY")
+KAVENEGAR_SENDER = env("KAVENEGAR_SENDER", default=None)
