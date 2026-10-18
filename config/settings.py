@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 from pathlib import Path
 import environ
 
+from barbershop.error_views import csrf_failure
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,7 +33,11 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1", "localhost"])
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 # Application definition
@@ -50,6 +56,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -127,12 +134,6 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.1/howto/static-files/
-
-STATIC_URL = "static/"
-
-
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
@@ -143,23 +144,27 @@ MAILERS = {
 }
 
 
+# CSRF failure view
+
+CSRF_FAILURE_VIEW = "barbershop.error_views.csrf_failure"
+
 # Celery
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html
 
-CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://localhost:6379/0")
-CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default="redis://localhost:6379/0")
-CELERY_TIMEZONE = TIME_ZONE
-CELERY_ENABLE_UTC = True
+# CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://localhost:6379/0")
+# CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default="redis://localhost:6379/0")
+# CELERY_TIMEZONE = TIME_ZONE
+# CELERY_ENABLE_UTC = True
 
-CELERY_BEAT_SCHEDULE = {
-    "send-appointment-reminders": {
-        "task": "barbershop.tasks.send_appointment_reminders",
-        "schedule": 60.0,  # check every minute
-    },
-}
+# CELERY_BEAT_SCHEDULE = {
+#     "send-appointment-reminders": {
+#         "task": "barbershop.tasks.send_appointment_reminders",
+#         "schedule": 60.0,  # check every minute
+#     },
+# }
 
 
-# Kavenegar (SMS reminders)
+# # Kavenegar (SMS reminders)
 
-KAVENEGAR_API_KEY = env("KAVENEGAR_API_KEY")
-KAVENEGAR_SENDER = env("KAVENEGAR_SENDER", default=None)
+# KAVENEGAR_API_KEY = env("KAVENEGAR_API_KEY")
+# KAVENEGAR_SENDER = env("KAVENEGAR_SENDER", default=None)

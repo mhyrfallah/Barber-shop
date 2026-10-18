@@ -14,11 +14,26 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
+
+from barbershop import error_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('barbershop.urls')),
     path('rosetta/', include('rosetta.urls')),
 ]
+
+# Custom error pages. These must live in the ROOT urlconf.
+handler400 = "barbershop.error_views.bad_request"
+handler403 = "barbershop.error_views.permission_denied"
+handler404 = "barbershop.error_views.page_not_found"
+handler500 = "barbershop.error_views.server_error"
+
+# Preview the pages at /_errors/404/ etc. while DEBUG=True (never in production).
+if settings.DEBUG:
+    urlpatterns += [
+        path('_errors/<int:code>/', error_views.preview),
+    ]
