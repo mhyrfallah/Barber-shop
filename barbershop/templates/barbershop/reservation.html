@@ -14,53 +14,52 @@
 </div>
 
 <section class="section pt-2">
-  <div class="page-wrap flex justify-center">
-    <div>
-      <div class="text-center mb-6">
-        <h1 class="page-hero-title">Almost there!</h1>
-        <p class="text-sm text-muted mt-2">Enter your name to hold this spot</p>
-      </div>
-
+  <div class="page-wrap">
+    <div class="text-center mb-6 max-w-xl mx-auto">
+      <h1 class="page-hero-title">Almost there!</h1>
+      <p class="text-sm text-muted mt-2">Enter your name to hold this spot</p>
+    </div>
+    <div class="flex justify-center">
       <div class="scroll-panel">
-        <div class="summary-line">
-          <span class="label">Date</span>
-          <span class="value">{{ slot.day.date|date:"D, M j" }}</span>
-        </div>
-        <div class="summary-line">
-          <span class="label">Time</span>
-          <span class="value">{{ slot.start_time|time:"g:i A" }}</span>
-        </div>
-        {% for service in services %}
-        <div class="summary-line">
-          <span class="label">{{ service.name }}</span>
-          <span class="value">{{ service.price|floatformat:"0g" }} Toman</span>
-        </div>
-        {% endfor %}
-        <div class="summary-line">
-          <span class="label">Deposit to pay</span>
-          <span class="value">{{ deposit_total|floatformat:"0g" }} Toman</span>
-        </div>
-
-        <form method="post"
-              action="{% url 'barbershop:reservation_create' slot.id %}"
-              data-reservation-form
-              class="mt-6">
-          {% csrf_token %}
-          <div class="field mb-5">
-            <label for="full_name">Your full name</label>
-            <input type="text" id="full_name" name="full_name" class="form-input" required autocomplete="name" placeholder="e.g. Alex Smith">
+          <div class="summary-line">
+            <span class="label">Date</span>
+            <span class="value">{{ slot.day.date|date:"D, M j" }}</span>
           </div>
-          <div class="field mb-5">
-            <label for="phone_number">Your phone number</label>
-            <input type="tel" id="phone_number" name="phone_number" class="form-input" required autocomplete="tel"
-                   placeholder="09123456789" pattern="09[0-9]{9}" maxlength="11" inputmode="numeric">
+          <div class="summary-line">
+            <span class="label">Time</span>
+            <span class="value">{{ slot.start_time|time:"g:i A" }}</span>
           </div>
-          <button type="submit" class="btn-seal">Reserve my spot</button>
-        </form>
+          {% for service in services %}
+          <div class="summary-line">
+            <span class="label">{{ service.name }}</span>
+            <span class="value">{{ service.price|floatformat:"0g" }} Toman</span>
+          </div>
+          {% endfor %}
+          <div class="summary-line">
+            <span class="label">Deposit to pay</span>
+            <span class="value">{{ deposit_total|floatformat:"0g" }} Toman</span>
+          </div>
 
-        <div class="mt-5 text-center">
-          <a href="{% url 'barbershop:service_select' slot.id %}" class="link-back">← Change services</a>
-        </div>
+          <form method="post"
+                action="{% url 'barbershop:reservation_create' slot.id %}"
+                data-reservation-form
+                class="mt-6">
+            {% csrf_token %}
+            <div class="field mb-5">
+              <label for="full_name">Your full name</label>
+              <input type="text" id="full_name" name="full_name" class="form-input" required autocomplete="name" placeholder="e.g. Alex Smith">
+            </div>
+            <div class="field mb-5">
+              <label for="phone_number">Your phone number</label>
+              <input type="tel" id="phone_number" name="phone_number" class="form-input" required autocomplete="tel"
+                    placeholder="09123456789" pattern="09[0-9]{9}" maxlength="11" inputmode="numeric">
+            </div>
+            <button type="submit" class="btn-seal">Reserve my spot</button>
+          </form>
+
+          <div class="mt-5 text-center">
+            <a href="{% url 'barbershop:service_select' slot.id %}" class="link-back">← Change services</a>
+          </div>
       </div>
     </div>
   </div>

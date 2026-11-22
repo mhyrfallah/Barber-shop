@@ -39,8 +39,13 @@
    }
    
    /* ---------- Page atmosphere ---------- */
+   html {
+     overflow-x: clip;
+   }
+
    body {
      background: var(--paper);
+     overflow-x: clip;
    }
    
    .page-bg {
@@ -474,7 +479,10 @@
    .day-rail {
      scrollbar-width: thin;
      scrollbar-color: var(--brass) transparent;
-     padding-bottom: 4px;
+     /* Room for hover lift; overflow-x would clip translateY without this */
+     padding-top: 10px;
+     padding-bottom: 8px;
+     margin-top: -6px;
    }
    
    .day-tab {
@@ -491,6 +499,8 @@
    }
    
    .day-tab:hover:not(.is-full) {
+     position: relative;
+     z-index: 2;
      transform: translateY(-3px);
      border-color: var(--brass);
      box-shadow: var(--shadow-soft);
@@ -820,6 +830,9 @@
      padding: 32px 28px;
      box-shadow: var(--shadow-card);
      max-width: 520px;
+     width: 100%;
+     margin-inline: auto;
+     box-sizing: border-box;
    }
    
    @media (min-width: 640px) { .scroll-panel { padding: 36px 36px; } }
@@ -1023,6 +1036,95 @@
    
    /* ---------- Accessibility ---------- */
    :focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+
+   /* ---------- Mobile / small screens ---------- */
+   @media (max-width: 640px) {
+     .section { padding: 40px 0; }
+     .hero { padding: 36px 0 48px; }
+
+     .brand-word .tagline { display: none; }
+
+     .header-row { gap: 10px; min-width: 0; }
+     .brand-lockup { min-width: 0; }
+
+     .btn-book-header {
+       padding: 8px 14px;
+       font-size: 0.78rem;
+       white-space: nowrap;
+     }
+
+     .nav-toggle {
+       width: 44px;
+       height: 44px;
+       flex-shrink: 0;
+     }
+
+     .feature-strip {
+       grid-template-columns: 1fr;
+       gap: 20px;
+     }
+
+     .scroll-panel { padding: 24px 18px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+     .cta-content { padding: 28px 20px; }
+
+     .hero-ctas {
+       flex-direction: column;
+       align-items: stretch;
+     }
+
+     .hero-ctas .btn-seal.is-inline,
+     .hero-ctas .btn-ghost {
+       width: 100%;
+       justify-content: center;
+     }
+
+     .summary-line {
+       flex-wrap: wrap;
+       gap: 4px 12px;
+     }
+
+     .summary-line .value {
+       margin-left: auto;
+       text-align: right;
+       word-break: break-word;
+     }
+
+     .service-row {
+       flex-wrap: wrap;
+       row-gap: 8px;
+       padding: 14px;
+     }
+
+     .service-name {
+       flex: 1 1 auto;
+       min-width: 0;
+     }
+
+     .service-price { margin-left: 34px; }
+
+     .step-rule {
+       width: 18px;
+       margin: 0 6px 22px;
+     }
+
+     .slot-card { min-height: 72px; }
+   }
+
+   @media (max-width: 400px) {
+     .btn-book-header { display: none; }
+
+     .brand-word .name { font-size: 0.95rem; }
+
+     .brand-monogram {
+       width: 36px;
+       height: 36px;
+       font-size: 0.88rem;
+     }
+   }
    
    @media (prefers-reduced-motion: reduce) {
      *, *::before, *::after {
