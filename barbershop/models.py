@@ -1,0 +1,56 @@
+from django.core.validators import RegexValidator
+from django.db import models
+
+
+phone_validator = RegexValidator(
+    regex=r'^09\d{9}$',
+    message="Enter a valid Iranian mobile number, e.g. 09123456789.",
+)
+
+
+class Day(models.Model):
+    date = models.DateField(unique=True)
+    is_available = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['date']
+
+    def __str__(self):
+        return f"{self.date} - {'Open' if self.is_available else 'Closed'}"
+
+
+class TimeSlot(models.Model):
+    day = models.ForeignKey(Day, on_delete=models.CASCADE, related_name='slots')
+    start_time = models.TimeField()
+    is_booked = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['start_time']
+        unique_together = ('day', 'start_time')
+
+    def __str__(self):
+        return f"{self.day.date} {self.start_time} - {'Booked' if self.is_booked else 'Available'}"
+
+
+class Service(models.Model):
+    name = models.CharField(max_length=120)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    is_active = models.BooleanField(default=False)
+    create_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Reservation(models.Model):
+    slot = models.OneToOneField(TimeSlot, on_delete=models.CASCADE, related_name='reservation')
+    full_name = models.CharField(max_length=150)
+    phone_number = models.CharField(max_length=11, validators=[phone_validator], default='09110000000')
+    is_paid = models.BooleanField(default=False)
+    services = models.ManyToManyField(Service, related_name='reservations')
+    deposit_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    reminder_sent = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.full_name} - {self.slot}"

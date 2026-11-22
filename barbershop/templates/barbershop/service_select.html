@@ -1,0 +1,59 @@
+{% extends "barbershop/base.html" %}
+
+{% block nav_note %}Services{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+  <div class="step-track">
+    <div class="step is-done"><span class="dot">1</span><span class="label">Time</span></div>
+    <div class="step-rule"></div>
+    <div class="step is-current"><span class="dot">2</span><span class="label">Service</span></div>
+    <div class="step-rule"></div>
+    <div class="step"><span class="dot">3</span><span class="label">Confirm</span></div>
+  </div>
+</div>
+
+<section class="section pt-2">
+  <div class="page-wrap">
+    <div class="scroll-panel max-w-xl mx-auto">
+      <h1 class="page-hero-title mb-1">What would you like?</h1>
+      <p class="text-sm text-muted mb-6">
+        {{ slot.day.date|date:"D, M j" }} · {{ slot.start_time|time:"g:i A" }}
+      </p>
+
+      {% if error %}
+      <div class="alert-banner mb-5" role="alert">{{ error }}</div>
+      {% endif %}
+
+      <form method="post" data-service-form>
+        {% csrf_token %}
+
+        <div class="flex flex-col gap-3">
+          {% for service in services %}
+            <label class="service-row">
+              <input type="checkbox" name="services" value="{{ service.id }}" data-price="{{ service.price }}">
+              <span class="service-name">{{ service.name }}</span>
+              <span class="service-price">{{ service.price|floatformat:"0g" }} Toman</span>
+            </label>
+          {% empty %}
+            <div class="empty-state">
+              <p>No services listed yet.</p>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="summary-line mt-6 pt-2">
+          <span class="label">Deposit to pay</span>
+          <span class="value" data-service-total>0 Toman</span>
+        </div>
+
+        <button type="submit" class="btn-seal mt-5">Continue</button>
+      </form>
+
+      <div class="mt-5 text-center">
+        <a href="{% url 'barbershop:slot_list' slot.day.id %}" class="link-back">← Pick another time</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

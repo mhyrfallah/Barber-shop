@@ -1,0 +1,26 @@
+{% extends "barbershop/base.html" %}
+{% load static %}
+
+{% block title %}{{ status_code }} — {{ error_title }} · MSH Barbershop{% endblock %}
+
+{% block extra_head %}
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="{% static 'css/errors.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="page-wrap">
+    <div class="error-panel">
+      <p class="error-code" aria-hidden="true">{{ status_code }}</p>
+      <h1 class="page-hero-title">{{ error_title }}</h1>
+      <p class="error-message">{{ error_message }}</p>
+
+      <div class="error-actions">
+        <a href="{% url 'barbershop:day_list' %}" class="btn-seal is-inline">← Back to home</a>
+        <a href="{% url 'barbershop:day_list' %}#pick-day" class="btn-ghost">Book an appointment</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
